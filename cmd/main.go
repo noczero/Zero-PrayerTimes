@@ -31,7 +31,7 @@ func main() {
 	prayerTimeService := services.NewAdhanService(config.NewEnv())
 
 	// Use ticker to running every minutes
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(1 * time.Minute)
 	done := make(chan bool)
 
 	go func() {

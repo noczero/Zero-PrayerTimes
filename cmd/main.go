@@ -41,7 +41,7 @@ func main() {
 				return
 			case t := <-ticker.C:
 				// trigger when ticker is up
-				logrus.Info("Check Prayer Time")
+				logrus.Debug("Check Prayer Time")
 
 				// use goroutine to play adhan
 				go runForeground(&t, prayerTimeService, playSoundService)

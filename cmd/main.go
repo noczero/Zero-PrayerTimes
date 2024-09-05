@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 	"time"
@@ -32,20 +33,19 @@ func main() {
 
 	// Use ticker to running every minutes
 	ticker := time.NewTicker(1 * time.Minute)
-	done := make(chan bool)
+	defer ticker.Stop()
+
+	var wg sync.WaitGroup
 
 	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case t := <-ticker.C:
-				// trigger when ticker is up
-				logrus.Debug("Check Prayer Time")
+		for t := range ticker.C {
+			logrus.Info("Check Prayer Time")
+			wg.Add(1)
 
-				// use goroutine to play adhan
-				go runForeground(&t, prayerTimeService, playSoundService)
-			}
+			go func(t time.Time) {
+				defer wg.Done()
+				runForeground(&t, prayerTimeService, playSoundService)
+			}(t)
 		}
 	}()
 
